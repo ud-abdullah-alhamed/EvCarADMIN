@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Vendors List</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 10px;
+            margin-left: 60px;
+        }
+        .navbar {
+            background-color: #007bff; /* Blue navbar */
+        }
+        .navbar a {
+            color: white;
+        }
+    </style>
+    <script>
+        // Check if the user is logged in
+        var userToken = localStorage.getItem('token');
+
+        // If the user is not logged in, redirect them to the login page
+        if (!userToken) {
+            window.location.href = 'login_page.html';  // Change 'login.html' to your actual login page
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+        // Add click event listener to logout link
+        document.getElementById('logout').addEventListener('click', function() {
+            // Clear token from local storage
+            localStorage.removeItem('token');
+            // Redirect user to login page
+            window.location.href = 'login_page.html';  // Change 'login.html' to your actual login page
+        });
+    });
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+     <!-- Navbar -->
+     <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Ev Car Admin Panel</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="stations_table.html" id="stations">Stations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="user_table.html" id="users">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="vendor_table.html" id="vendors">Vendors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="charger_table.html" id="chargers">Chargers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="tags_table.html" id="tags">Tags</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Suggestions_table.html" id="Suggestions">Suggestions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <style>
+        .nav-item .active {
+            font-weight: bold; /* Change as needed */
+            color: #ffffff; /* Change as needed */
+            background-color: #007bff; /* Change as needed */
+            border-radius: 5px; /* Change as needed */
+            padding: 5px 10px; /* Change as needed */
+        }
+    </style>
+
+    <div class="container">
+        <h2>Vendors List</h2>
+        <div class="form-group">
+            <label for="statusFilter">Filter by Status:</label>
+            <select class="form-control" id="statusFilter">
+                <option value="All">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+            </select>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Title</th>
+                    <th>Subtitle</th>
+                    <th>Image</th>
+                    <th>Address</th>
+                    <th>Number</th>
+                    <th>Commercial License</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Action</th> <!-- New column for action -->
+                </tr>
+            </thead>
+            <tbody id="vendorsTableBody">
+                <!-- Table content will be dynamically populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Add click event listener to the logout link
+        document.getElementById('logout').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default link behavior
+
+            // Clear token from localStorage
+            localStorage.removeItem('token');
+
+            // Redirect user to the login page
+            window.location.href = 'login_page.html'; // Replace '/login' with your actual login page URL
+        });
+
+        // Function to fetch all vendors
+        function fetchAllVendors() {
+            fetch('https://good-plum-agouti-hose.cyclic.app/vendors/getAllvendors')
+                .then(response => response.json())
+                .then(data => populateTable(data.allVendors))
+                .catch(error => console.error('Error fetching vendors:', error));
+        }
+
+        // Function to populate the table with vendors based on status filter
+        function filterVendorsByStatus(status) {
+            const allVendors = document.querySelectorAll('#vendorsTableBody tr');
+            allVendors.forEach(vendor => {
+                const vendorStatus = vendor.querySelector('td:nth-child(10)').textContent;
+                if (status === 'All' || vendorStatus === status) {
+                    vendor.style.display = '';
+                } else {
+                    vendor.style.display = 'none';
+                }
+            });
+        }
+
+        // Add change event listener to the status filter dropdown
+        document.getElementById('statusFilter').addEventListener('change', function() {
+            const selectedStatus = this.value;
+            filterVendorsByStatus(selectedStatus);
+        });
+
+        // Function to populate the table with vendor data
+        function populateTable(vendorsData) {
+            const vendorsTableBody = document.getElementById('vendorsTableBody');
+            vendorsTableBody.innerHTML = ''; // Clear previous data
+
+            vendorsData.forEach(vendor => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${vendor._id}</td>
+                    <td>${vendor.title}</td>
+                    <td>${vendor.subtitle}</td>
+                    <td><img src="${vendor.img}" alt="Vendor Image" style="max-width: 50px;"></td>
+                    <td>${vendor.address}</td>
+                    <td>${vendor.number}</td>
+                    <td><a href="${vendor.commercialLicense}" target="_blank">View Commercial License</a></td>
+                    <td>${vendor.type}</td>
+                    <td>${vendor.description}</td>
+                    <td>${vendor.status}</td>
+                    <td><button class="btn btn-primary approveBtn" data-vendor-id="${vendor._id}" ${vendor.status === 'Approved' ? 'disabled' : ''}>Approve</button></td>
+                `;
+
+                vendorsTableBody.appendChild(row);
+            });
+
+            // Add event listener to approve buttons
+            document.querySelectorAll('.approveBtn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const vendorId = this.getAttribute('data-vendor-id');
+                    approveVendor(vendorId);
+                });
+            });
+        }
+
+    // Function to approve vendor
+ 
+    // Function to approve vendor
+    function approveVendor(vendorId) {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            console.error('Token not found. User may not be logged in.');
+            return;
+        }
+
+        fetch(`https://adventurous-yak-pajamas.cyclic.app/admin/approveVendor/${vendorId}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to approve vendor');
+            }
+            console.log('Vendor approved successfully');
+            // Update status in UI
+            const statusCell = document.querySelector(`#status-${vendorId}`);
+            if (statusCell) {
+                statusCell.textContent = 'Approved';
+            }
+            // Disable the button
+            const approveBtn = document.querySelector(`.approveBtn[data-vendor-id="${vendorId}"]`);
+            if (approveBtn) {
+                approveBtn.disabled = true;
+            }
+            // Update status in vendorsData if available
+            if (window.vendorsData) {
+                const vendorIndex = window.vendorsData.findIndex(vendor => vendor._id === vendorId);
+                if (vendorIndex !== -1) {
+                    window.vendorsData[vendorIndex].status = 'Approved';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error approving vendor:', error);
+        });
+    }
+    fetchAllVendors();
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure AD OAuth 2.0 Example with PKCE - Callback</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Azure AD OAuth 2.0 Example with PKCE - Callback</h2>
+    <p>Fetching data...</p>
+
+    <script>
+        const tokenEndpoint = 'https://login.microsoftonline.com/{your-tenant-id}/oauth2/v2.0/token';
+
+        function exchangeCodeForToken() {
+            const code = getUrlParameter('code');
+            const codeVerifier = sessionStorage.getItem('pkce_code_verifier');
+
+            const params = {
+                client_id: clientId,
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: redirectUri,
+                code_verifier: codeVerifier
+            };
+
+            fetch(tokenEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams(params)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const accessToken = data.access_token;
+                const expiresIn = data.expires_in; // optional: expiration time of the access token
+                const refreshToken = data.refresh_token; // optional: use this to refresh the access token
+
+                // Now you have the access token, you can use it to make authenticated requests to your API
+                // Example:
+                fetch('https://api.example.com/resource', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle response from the API
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching resource:', error);
+                });
+            })
+            .catch(error => {
+                console.error('Error exchanging code for token:', error);
+            });
+        }
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Check if there's a code parameter in the URL, indicating a successful authentication redirect
+        const code = getUrlParameter('code');
+        if (code) {
+            exchangeCodeForToken();
+        } else {
+            // Redirect back to login page if no code parameter is found
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

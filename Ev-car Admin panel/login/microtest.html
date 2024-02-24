@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft OAuth 2.0 Authentication</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  .container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  button {
+    padding: 10px 20px;
+    background-color: #0078D4;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Microsoft OAuth 2.0 Authentication</h2>
+  <button id="loginBtn">Login with Microsoft</button>
+</div>
+<script src="https://alcdn.msauth.net/browser/2.14.0/js/msal-browser.min.js"></script>
+<script>
+  const msalConfig = {
+    auth: {
+      clientId: 'YOUR_CLIENT_ID',
+      authority: 'https://login.microsoftonline.com/YOUR_TENANT_ID',
+      redirectUri: 'http://localhost:3000' // Update with your redirect URI
+    },
+    cache: {
+      cacheLocation: 'sessionStorage',
+      storeAuthStateInCookie: false
+    }
+  };
+
+  const loginRequest = {
+    scopes: ['openid', 'profile', 'User.Read']
+  };
+
+  const myMSALObj = new msal.PublicClientApplication(msalConfig);
+
+  document.getElementById("loginBtn").addEventListener("click", function() {
+    myMSALObj.loginRedirect(loginRequest)
+      .then(response => {
+        console.log("Login successful", response);
+      })
+      .catch(error => {
+        console.log("Error during login:", error);
+      });
+  });
+</script>
+</body>
+</html>

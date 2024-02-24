@@ -1,0 +1,171 @@
+<!-- users.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Users List</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .navbar {
+            background-color: #007bff; /* Blue navbar */
+        }
+        .navbar a {
+            color: white;
+        }
+    </style>
+  <!-- ... (previous code) ... -->
+
+  <script>
+    // ... (previous code) ...
+
+    // Function to fetch user data from the API
+    function fetchUserData() {
+
+        var userToken = localStorage.getItem('token');
+
+
+        if (!userToken) {
+            window.location.href = 'login_page.html';  // Change 'login.html' to your actual login page
+        }
+        
+        fetch('https://good-plum-agouti-hose.cyclic.app/users/getallusers', {
+            headers: {
+                'Authorization': 'Bearer ' + userToken
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Check if data is an array
+                if (Array.isArray(data)) {
+                    populateUserTable(data);
+                } else {
+                    console.error('Invalid user data format. Expected an array.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+            });
+    }
+
+    // Populate the table with user data
+    function populateUserTable(usersData) {
+        var usersTableBody = document.getElementById('usersTableBody');
+
+        usersData.forEach(user => {
+            var row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${user._id}</td>
+                <td>${user.phone}</td>
+                <td>${user.username}</td>
+                <td>${user.carType || ''}</td>
+                <td>${user.role}</td>
+            `;
+
+            usersTableBody.appendChild(row);
+        });
+    }
+
+
+
+    // Call the function to fetch and populate the user table
+    fetchUserData();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add click event listener to logout link
+        document.getElementById('logout').addEventListener('click', function() {
+            // Clear token from local storage
+            localStorage.removeItem('token');
+            // Redirect user to login page
+            window.location.href = 'login_page.html';  // Change 'login.html' to your actual login page
+        });
+    });
+</script>
+<!-- ... (remaining code) ... -->
+
+</head>
+<body>
+    <!-- Navbar -->
+      <!-- Navbar -->
+         <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Ev Car Admin Panel</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="stations_table.html" id="stations">Stations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="user_table.html" id="users">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="vendor_table.html" id="vendors">Vendors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="charger_table.html" id="chargers">Chargers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="tags_table.html" id="tags">Tags</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Suggestions_table.html" id="Suggestions">Suggestions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+    <script>
+        // Get all navigation links
+        const navLinks = document.querySelectorAll('.nav-link');
+    
+        // Add click event listener to each navigation link
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                // Remove 'active' class from all links
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                // Add 'active' class to the clicked link
+                this.classList.add('active');
+            });
+        });
+    </script>
+
+    <div class="container">
+        <h2>Users List</h2>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Phone</th>
+                    <th>Username</th>
+                    <th>Car Type</th>
+                    
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody">
+                <!-- Table content will be dynamically populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

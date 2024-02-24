@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Vendor Details</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .navbar {
+            background-color: #007bff; /* Blue navbar */
+        }
+        .navbar a {
+            color: white;
+        }
+    </style>
+    <script>
+        // Check if the user is logged in
+        var userToken = localStorage.getItem('token');
+
+        // If the user is not logged in, redirect them to the login page
+        if (!userToken) {
+            window.location.href = 'login_page.html';  // Change 'login.html' to your actual login page
+        }
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Ev Car Admin Panel</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Stations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="user_table.html">users</a>
+                </li>
+               
+                <li class="nav-item">
+                    <a class="nav-link" href="vendor.html">Vendors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="vendor.html">Chargers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="vendor.html">T ags</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="vendor.html">logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Vendor Details</h2>
+
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>Title</th>
+                    <td id="title"></td>
+                </tr>
+                <tr>
+                    <th>Subtitle</th>
+                    <td id="subtitle"></td>
+                </tr>
+                <tr>
+                    <th>Image</th>
+                    <td id="img"></td>
+                </tr>
+                <tr>
+                    <th>Address</th>
+                    <td id="address"></td>
+                </tr>
+                <tr>
+                    <th>Number</th>
+                    <td id="number"></td>
+                </tr>
+                <tr>
+                    <th>Commercial License</th>
+                    <td id="commercialLicense"></td>
+                </tr>
+                <tr>
+                    <th>Password</th>
+                    <td id="password"></td>
+                </tr>
+                <tr>
+                    <th>Type</th>
+                    <td id="type"></td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td id="description"></td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td id="status"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Sample JSON data
+        var jsonData = {
+            "_id": "65b6a126be2ac13040e4d913",
+            "title": "sdfsfsdf",
+            "subtitle": "fsdfsdfsdfsdf",
+            "img": "https://firebasestorage.googleapis.com/v0/b/evcar-48b5e.appspot.com/o/images%2F1706467607916.png?alt=media&token=04051bf6-163b-4b29-b91e-a0368a66cfa7",
+            "address": "sdfsdfsfsd",
+            "coordinates": "",
+            "number": "962787897978",
+            "commercialLicense": "https://firebasestorage.googleapis.com/v0/b/evcar-48b5e.appspot.com/o/images%2F1706467611241.png?alt=media&token=ffa3f88c-bbd5-4de4-8cf7-73a543f2e487",
+            "password": "$2b$10$4/Fz9JIP7XfiPVwHeSeDtu7T3N0mbXgiGKPbwqMMtlP6vJIyI5Fo6",
+            "type": "individual",
+            "description": "fsdsdfsd",
+            "status": "Pending",
+            "__v": 0
+        };
+
+        // Populate the table with data
+        document.getElementById('title').innerHTML = jsonData.title;
+        document.getElementById('subtitle').innerHTML = jsonData.subtitle;
+        document.getElementById('img').innerHTML = `<img src="${jsonData.img}" alt="Vendor Image" style="max-width: 200px;">`;
+        document.getElementById('address').innerHTML = jsonData.address;
+        document.getElementById('number').innerHTML = jsonData.number;
+        document.getElementById('commercialLicense').innerHTML = `<a href="${jsonData.commercialLicense}" target="_blank">View Commercial License</a>`;
+        document.getElementById('password').innerHTML = jsonData.password;
+        document.getElementById('type').innerHTML = jsonData.type;
+        document.getElementById('description').innerHTML = jsonData.description;
+        document.getElementById('status').innerHTML = jsonData.status;
+    </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Edit Charger</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .rounded-container {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .rounded-image {
+            border-radius: 10%;
+            max-width: 100%;
+            height: 350px;
+            margin-top: 10px;
+        }
+
+        .edit-button {
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Charger</h2>
+
+        <!-- Form for editing charger details -->
+        <form id="editChargerForm">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" class="form-control" id="title" required>
+            </div>
+            <div class="form-group">
+                <label for="image">Image URL:</label>
+                <input type="text" class="form-control" id="image" required>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="updateCharger()">Update Charger</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        var apiEndpoint = 'https://good-plum-agouti-hose.cyclic.app';
+        var userToken = localStorage.getItem('token');
+
+        if (!userToken) {
+            window.location.href = 'login_page.html';
+        }
+
+        function getChargerById(chargerId) {
+            fetch(`${apiEndpoint}/chargers/getChargerById/${chargerId}`)
+                .then(response => response.json())
+                .then(charger => {
+                    document.getElementById('title').value = charger.title;
+                    document.getElementById('image').value = charger.image;
+                })
+                .catch(error => {
+                    console.error('Error during API call:', error);
+                });
+        }
+
+        function updateCharger() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var chargerId = urlParams.get('id');
+            var title = document.getElementById('title').value;
+            var image = document.getElementById('image').value;
+
+            var requestData = {
+                id: chargerId,
+                title: title,
+                image: image
+            };
+
+            fetch(`${apiEndpoint}/chargers/update`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Charger updated successfully:', result);
+                    alert('Charger updated successfully!');
+                    window.location.href = 'charger_table.html';
+                })
+                .catch(error => {
+                    console.error('Error during API call:', error);
+                    alert('Error updating charger. Please try again.');
+                });
+        }
+
+        var urlParams = new URLSearchParams(window.location.search);
+        var chargerId = urlParams.get('id');
+        getChargerById(chargerId);
+    </script>
+</body>
+</html>

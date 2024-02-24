@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Add Charger</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .rounded-container {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .rounded-image {
+            border-radius: 10%;
+            max-width: 100%;
+            height: 350px;
+            margin-top: 10px;
+        }
+
+        .edit-button {
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+    </style>
+    <script>
+        // Check if the user is logged in
+        var userToken = localStorage.getItem('token');
+
+        // If the user is not logged in, redirect them to the login page
+        if (!userToken) {
+            window.location.href = 'login_page.html';  // Change 'login.html' to your actual login page
+        }
+
+        // You should replace this with the actual API endpoint
+        var apiEndpoint = 'https://adventurous-yak-pajamas.cyclic.app';
+
+        function createCharger() {
+            var title = document.getElementById('title').value;
+            var image = document.getElementById('image').value;
+
+            var requestData = {
+                title: title,
+                image: image
+            };
+
+            fetch(`${apiEndpoint}/chargers/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Charger created successfully:', result);
+                    alert('Charger created successfully!');
+                    // Redirect to the chargers list page or wherever you want
+                    window.location.href = 'charger_table.html';
+                })
+                .catch(error => {
+                    console.error('Error during API call:', error);
+                    alert('Error creating charger. Please try again.');
+                });
+        }
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">Ev Car Admin Panel</a>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Add Charger</h2>
+
+        <!-- Form for creating a new charger -->
+        <form id="createChargerForm">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" class="form-control" id="title" required>
+            </div>
+            <div class="form-group">
+                <label for="image">Image URL:</label>
+                <input type="text" class="form-control" id="image" required>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="createCharger()">Add Charger</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

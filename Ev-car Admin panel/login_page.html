@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Login Form</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 100px;
+        }
+        #loginContainer {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loginContainer">
+            <h2 class="mb-4">Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number:</label>
+                    <input type="tel" class="form-control" id="phoneNumber" placeholder="Enter phone number" required pattern="[0-9]+" title="Only digits allowed">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter password" required>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="submitForm()">Login</button>
+                <div id="responseContainer" class="mt-3"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function submitForm() {
+            // Form validation
+            var phoneNumber = document.getElementById('phoneNumber').value;
+            var password = document.getElementById('password').value;
+
+            if (!phoneNumber || !password) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            // Prepare data for API call
+            var requestData = {
+                phone: phoneNumber,
+                password: password
+            };
+
+            // API call
+            fetch('https://good-plum-agouti-hose.cyclic.app/auth/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(apiResponse => {
+        // Check the API response for success
+        if (apiResponse.status === 'success') {
+            // Caching token in local storage
+            localStorage.setItem('token', apiResponse.token);
+
+            // Redirect to the station page
+            window.location.href = 'stations_table.html';
+
+            console.log('Login successful!');
+            console.log('Token cached:', apiResponse.token);
+        } else {
+            alert('Login failed. Check your credentials.');
+        }
+    })
+    .catch(error => {
+        console.error('Error during API call:', error);
+    });
+        }
+    </script>
+</body>
+</html>
